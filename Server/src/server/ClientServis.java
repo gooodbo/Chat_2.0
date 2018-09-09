@@ -40,27 +40,29 @@ public class ClientServis implements Runnable {
         }
 
         while (true) {
+            try {
+                if (in.hasNext()) {
+                    String clientMsg = in.nextLine();
 
-            if (in.hasNext()) {
-                String clientMsg = in.nextLine();
+                    if (clientMsg.equalsIgnoreCase("exitnow")) {
+                        System.out.println("Кто-то вышел НАХУЙ...");
+                        break;
+                    }
 
-                if (clientMsg.equalsIgnoreCase("exitnow")) {
-                    System.out.println("Кто-то вышел НАХУЙ...");
-                    break;
+                    System.out.println(clientMsg);
+                    server.sendMsgToAll(clientMsg);
                 }
 
-                System.out.println(clientMsg);
-                server.sendMsgToAll(clientMsg);
-            }
-            try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                this.close();
             }
         }
     }
 
-    public void sendMsg(String msg) {
+    public synchronized void sendMsg(String msg) {
         try {
             out.println(msg);
             out.flush();
@@ -69,7 +71,7 @@ public class ClientServis implements Runnable {
         }
     }
 
-    public void close() {
+    public synchronized void close() {
         server.deleteClient(this);
         clientCount--;
         server.sendMsgToAll("Людей в чате: " + clientCount);
