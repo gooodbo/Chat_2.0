@@ -18,7 +18,8 @@ public class Server {
 
             while (true) {
                 clientSocket = serverSocket.accept();
-                ClientServis client = new ClientServis(clientSocket, this);
+                ClientServis client = new ClientServis();
+                client.connect(clientSocket, this);
                 clients.add(client);
                 new Thread(client).start();
             }
@@ -28,9 +29,8 @@ public class Server {
         } finally {
             try {
 
-                assert clientSocket != null;
                 clientSocket.close();
-                System.out.println("Сервер остановал свою работу");
+                System.out.println("Сервер экстренно остановал свою работу...");
                 //Саня писос код не чекает полностью
                 serverSocket.close();
 

@@ -10,17 +10,21 @@ public class ClientServis implements Runnable {
     private PrintWriter out;
     private Scanner in;
     private static final int PORT = 8888;
-    private Socket clientSocket;
-    private static int clientCount = 0;
+    private Socket clientSocket = null;
+    public static int clientCount = 0;
+    private boolean flag = false;
 
 
-    public ClientServis(Socket socket, Server server) {
+    public ClientServis() {
 
-        clientCount++;
-        this.server = server;
-        this.clientSocket = socket;
+    }
+
+
+    public void connect(Socket socket, Server server) {
         try {
-
+            clientCount++;
+            this.server = server;
+            this.clientSocket = socket;
             this.out = new PrintWriter(socket.getOutputStream());
             this.in = new Scanner(socket.getInputStream());
 
@@ -32,20 +36,19 @@ public class ClientServis implements Runnable {
 
     @Override
     public void run() {
+        try {
+            while (true) {
+                server.sendMsgToAll("[Кто-то вошёл, уже в чате " + clientCount + "]");
+                break;
+            }
 
-        while (true) {
-            server.sendMsgToAll("Кто-то вошёл...");
-            server.sendMsgToAll("Уже в чаике " + clientCount + " ...");
-            break;
-        }
-
-        while (true) {
-            try {
+            while (!flag) {
                 if (in.hasNext()) {
+
                     String clientMsg = in.nextLine();
 
-                    if (clientMsg.equalsIgnoreCase("exitnow")) {
-                        System.out.println("Кто-то вышел НАХУЙ...");
+                    if (clientMsg.equals("exit")) {
+                        flag = true;
                         break;
                     }
 
@@ -54,13 +57,15 @@ public class ClientServis implements Runnable {
                 }
 
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                this.close();
             }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            this.close();
         }
     }
+
 
     public synchronized void sendMsg(String msg) {
         try {
@@ -71,9 +76,10 @@ public class ClientServis implements Runnable {
         }
     }
 
+
     public synchronized void close() {
         server.deleteClient(this);
         clientCount--;
-        server.sendMsgToAll("Людей в чате: " + clientCount);
+        server.sendMsgToAll("[Людей в чате: " + clientCount + "]");
     }
 }
