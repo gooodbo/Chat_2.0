@@ -3,11 +3,13 @@ package server;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Server {
 
     private ArrayList<ClientServis> clients = new ArrayList<>();
     private final static int PORT = 8888;
+
 
     public Server() {
         Socket clientSocket = null;
@@ -31,20 +33,27 @@ public class Server {
 
                 clientSocket.close();
                 System.out.println("Сервер экстренно остановал свою работу...");
-                //Саня писос код не чекает полностью
                 serverSocket.close();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     public void sendMsgToAll(String msg) {
-        for (ClientServis xyi : clients) {
-            xyi.sendMsg(msg);
+
+        //   for (ClientServis xyi : clients) {
+        //         xyi.sendMsg(msg);
+        //   }
+
+        Iterator<ClientServis> iterator = clients.iterator();
+        while (iterator.hasNext()) {
+
+            iterator.next().sendMsg(msg);
         }
+
+
     }
 
     public void deleteClient(ClientServis client) {

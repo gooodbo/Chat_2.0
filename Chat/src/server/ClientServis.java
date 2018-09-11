@@ -15,10 +15,10 @@ public class ClientServis implements Runnable {
     private boolean flag = false;
 
 
+
     public ClientServis() {
 
     }
-
 
     public void connect(Socket socket, Server server) {
         try {
@@ -37,10 +37,8 @@ public class ClientServis implements Runnable {
     @Override
     public void run() {
         try {
-            while (true) {
-                server.sendMsgToAll("[Кто-то вошёл, уже в чате " + clientCount + "]");
-                break;
-            }
+
+            server.sendMsgToAll("[Кто-то вошёл, уже в чате " + clientCount + "]");
 
             while (!flag) {
                 if (in.hasNext()) {
@@ -76,6 +74,9 @@ public class ClientServis implements Runnable {
         }
     }
 
+    public int getPort2(int port) {
+        return port;
+    }
 
     public synchronized void close() {
         server.deleteClient(this);

@@ -17,12 +17,19 @@ public class ClientWindow extends JFrame {
     private static final int PORT = 8888;
     private static final String IP = "127.0.0.1";
     private Socket clientSocket;
+    Thread thread;
     private Scanner in;
     private PrintWriter out;
     private JTextArea msgAreaOut;
     private JTextField nameField;
     private JTextField msgAreaIn;
     private String clientName = "";
+
+    private boolean flag = false;
+
+    public void kill() {
+        flag = true;
+    }
 
     public ClientWindow() {
         try {
@@ -92,20 +99,25 @@ public class ClientWindow extends JFrame {
             }
         });
 
-        new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
-
-                while (true) {
-                    if (in.hasNext()) {
-
-                        String msg = in.nextLine();
-                        msgAreaOut.append(msg);
-                        msgAreaOut.append("\n");
+                try {
+                    while (!flag) {
+                        if (in.hasNext()) {
+                            String msg = in.nextLine();
+                            msgAreaOut.append(msg);
+                            msgAreaOut.append("\n");
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    System.out.println("Я в файнали");
                 }
             }
-        }).start();
+        });
+        thread.start();
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -123,6 +135,7 @@ public class ClientWindow extends JFrame {
                     out.flush();
                     out.close();
                     clientSocket.close();
+                    kill();
 
                 } catch (Exception a) {
                     a.printStackTrace();
