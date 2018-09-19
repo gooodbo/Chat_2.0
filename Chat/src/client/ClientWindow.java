@@ -127,6 +127,8 @@ public class ClientWindow extends JFrame {
                         out.println("[ \"" + clientName + "\" ливнул]");
                     } else {
                         out.println("[Вышел ноунейм]");
+                        msgAreaOut.append("[Вышел ноунейм]");
+                        msgAreaOut.append("\n");
                     }
 
                     out.println("exit");
@@ -148,6 +150,8 @@ public class ClientWindow extends JFrame {
     public synchronized void sendMsg() {
 
         String msg = nameField.getText() + ": " + msgAreaIn.getText();
+        msgAreaOut.append(msg);
+        msgAreaOut.append("\n");
         out.println(msg);
         out.flush();
         msgAreaIn.setText("");
