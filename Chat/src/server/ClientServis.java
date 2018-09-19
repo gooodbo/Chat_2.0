@@ -26,7 +26,8 @@ public class ClientServis extends Thread {
     public void run() {
         try {
 
-            this.sendMsg("[Кто-то вошёл, уже в чате " + clientCount + "]");
+            sendMsgToAll("[Кто-то вошёл, уже в чате " + clientCount + "]");
+            sendMsg("[Кто-то вошёл, уже в чате " + clientCount + "]");
 
             while (!flag) {
                 if (in.hasNext()) {
@@ -42,13 +43,15 @@ public class ClientServis extends Thread {
                     //    xyi.sendMsg(clientMsg);
                     // }
 
-                    for (int i = 0; i < Server.clients.size(); i++) {
-                        if (Server.clients.get(i) != this)
-                            Server.clients.get(i).sendMsg(clientMsg);
-
-                    }
-
+                    sendMsgToAll(clientMsg);
                     System.out.println(clientMsg);
+
+                    //for (int i = 0; i < Server.clients.size(); i++) {
+                    //    if (Server.clients.get(i) != this)
+                    //         Server.clients.get(i).sendMsg(clientMsg);
+
+                    //  }
+
 
                 }
 
@@ -65,10 +68,19 @@ public class ClientServis extends Thread {
 
     private void close() {
         clientCount--;
-        sendMsg("[Людей в чате: " + clientCount + "]");
+        sendMsgToAll("[Людей в чате: " + clientCount + "]");
         System.out.println("Я в закрытии");
         Server.clients.remove(this);
         out.close();
+    }
+
+    private void sendMsgToAll(String clientMsg) {
+
+        for (int i = 0; i < Server.clients.size(); i++) {
+            if (Server.clients.get(i) != this)
+                Server.clients.get(i).sendMsg(clientMsg);
+
+        }
     }
 
     private void sendMsg(String msg) {

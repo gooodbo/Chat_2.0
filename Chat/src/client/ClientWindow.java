@@ -127,8 +127,7 @@ public class ClientWindow extends JFrame {
                         out.println("[ \"" + clientName + "\" ливнул]");
                     } else {
                         out.println("[Вышел ноунейм]");
-                        msgAreaOut.append("[Вышел ноунейм]");
-                        msgAreaOut.append("\n");
+
                     }
 
                     out.println("exit");
