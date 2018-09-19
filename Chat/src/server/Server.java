@@ -3,13 +3,11 @@ package server;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class Server {
 
     private ArrayList<ClientServis> clients = new ArrayList<>();
     private final static int PORT = 8888;
-
 
     public Server() {
         Socket clientSocket = null;
@@ -23,6 +21,7 @@ public class Server {
                 ClientServis client = new ClientServis();
                 client.connect(clientSocket, this);
                 clients.add(client);
+
                 new Thread(client).start();
             }
         } catch (Exception e) {
@@ -43,17 +42,15 @@ public class Server {
 
     public void sendMsgToAll(String msg) {
 
-        //   for (ClientServis xyi : clients) {
-        //         xyi.sendMsg(msg);
+        //for (ClientServis xyi : clients) {
+        //     xyi.sendMsg(msg);
         //   }
 
-        Iterator<ClientServis> iterator = clients.iterator();
-        while (iterator.hasNext()) {
+        for (int i = 0; i < clients.size(); i++) {
 
-            iterator.next().sendMsg(msg);
+                clients.get(i).sendMsg(msg);
+
         }
-
-
     }
 
     public void deleteClient(ClientServis client) {

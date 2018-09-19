@@ -1,8 +1,5 @@
 package client;
 
-import server.ClientServis;
-import server.Server;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,14 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-import static server.ClientServis.clientCount;
-
 public class ClientWindow extends JFrame {
 
     private static final int PORT = 8888;
-    private static final String IP = "127.0.0.1";
+    private static final String IP = "192.168.122.1";
     private Socket clientSocket;
-    Thread thread;
+    private Thread thread;
     private Scanner in;
     private PrintWriter out;
     private JTextArea msgAreaOut;
@@ -27,11 +22,12 @@ public class ClientWindow extends JFrame {
 
     private boolean flag = false;
 
-    public void kill() {
+    private void kill() {
         flag = true;
     }
 
     public ClientWindow() {
+
         try {
             clientSocket = new Socket(IP, PORT);
             in = new Scanner(clientSocket.getInputStream());
@@ -72,6 +68,7 @@ public class ClientWindow extends JFrame {
                     clientName = nameField.getText();
                     sendMsg();
                     msgAreaIn.grabFocus();
+
                 }
             }
         });
@@ -105,6 +102,7 @@ public class ClientWindow extends JFrame {
                 try {
                     while (!flag) {
                         if (in.hasNext()) {
+
                             String msg = in.nextLine();
                             msgAreaOut.append(msg);
                             msgAreaOut.append("\n");

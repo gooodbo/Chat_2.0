@@ -9,11 +9,9 @@ public class ClientServis implements Runnable {
     private Server server;
     private PrintWriter out;
     private Scanner in;
-    private static final int PORT = 8888;
     private Socket clientSocket = null;
     public static int clientCount = 0;
     private boolean flag = false;
-
 
 
     public ClientServis() {
@@ -32,6 +30,10 @@ public class ClientServis implements Runnable {
             e.printStackTrace();
         }
 
+    }
+
+    public ClientServis getClient() {
+        return this;
     }
 
     @Override
@@ -72,10 +74,6 @@ public class ClientServis implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public int getPort2(int port) {
-        return port;
     }
 
     public synchronized void close() {
