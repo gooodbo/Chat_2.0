@@ -4,43 +4,29 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ClientServis implements Runnable {
-
-    private Server server;
+public class ClientServis extends Thread {
     private PrintWriter out;
     private Scanner in;
-    private Socket clientSocket = null;
-    public static int clientCount = 0;
+    private static int clientCount = 0;
     private boolean flag = false;
 
-
-    public ClientServis() {
-
-    }
-
-    public void connect(Socket socket, Server server) {
+    public ClientServis(Socket socket) {
         try {
             clientCount++;
-            this.server = server;
-            this.clientSocket = socket;
             this.out = new PrintWriter(socket.getOutputStream());
             this.in = new Scanner(socket.getInputStream());
+            start();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-
-    public ClientServis getClient() {
-        return this;
     }
 
     @Override
     public void run() {
         try {
 
-            server.sendMsgToAll("[Кто-то вошёл, уже в чате " + clientCount + "]");
+            sendMsg("[Кто-то вошёл, уже в чате " + clientCount + "]");
 
             while (!flag) {
                 if (in.hasNext()) {
@@ -52,8 +38,12 @@ public class ClientServis implements Runnable {
                         break;
                     }
 
+                    for (ClientServis xyi : Server.clients) {
+                        xyi.sendMsg(clientMsg);
+                    }
+
                     System.out.println(clientMsg);
-                    server.sendMsgToAll(clientMsg);
+
                 }
 
                 Thread.sleep(100);
@@ -62,23 +52,23 @@ public class ClientServis implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
+            System.out.println("Я в файнали");
             this.close();
         }
     }
 
+    private synchronized void close() {
+        clientCount--;
+       this.sendMsg("[Людей в чате: " + clientCount + "]");
+        Server.clients.remove(this);
+    }
 
-    public synchronized void sendMsg(String msg) {
+    private void sendMsg(String msg) {
         try {
             out.println(msg);
             out.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public synchronized void close() {
-        server.deleteClient(this);
-        clientCount--;
-        server.sendMsgToAll("[Людей в чате: " + clientCount + "]");
     }
 }
